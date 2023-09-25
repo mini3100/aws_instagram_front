@@ -27,14 +27,15 @@ function Input({ type, placeholder, name, changeAccount }) {
             default: regex = null;
         }
 
-        // regex 값이 있을 경우
-        if(!!regex && !regex.test(value)) {    // match되면 true, 안 되면 false
-            console.log(`${e.target.name} 매칭되지 않음`)
+        // (value와 정규식이 match되면 true, 안 되면 false)
+        if(!!regex && !regex.test(value)) {    // regex 값이 있고, match 안 됐을 경우
             setInputState(<><ImCancelCircle/></>)
-            return;
+        } else if(!!regex && regex.test(value)) {   // regex 값이 있고, match 됐을 경우
+            setInputState(<><BsCheckCircle/></>)
+        } else {    // regex 값이 null일 때
+            setInputState("")
         }
 
-        setInputState(<><BsCheckCircle/></>)
     }
 
     const handleInputOnFocus = () => {
