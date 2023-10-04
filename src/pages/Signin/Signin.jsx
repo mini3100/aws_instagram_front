@@ -8,6 +8,7 @@ import { signin } from '../../apis/api/account';
 
 function Signin(props) {
     const navigate = useNavigate();
+
     const emptyAccount = {
         phoneOrEmailOrUsername: "",
         loginPassword: ""
@@ -29,7 +30,9 @@ function Signin(props) {
 
     const handleSigninSubmit = async () => {
         try {
-            await signin(account);
+            const response = await signin(account);
+            localStorage.setItem("accessToken", "Bearer " + response.data); // Bearer: Access Token의 유형
+            window.location.reload();   // AuthRoute를 다시 실행해서 로그인된 조건을 재실행
         } catch(error) {
             setErrorMsg(error.response.data.errorMessage)
         }

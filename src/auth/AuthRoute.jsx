@@ -1,27 +1,41 @@
-import React, { useState } from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { authenticate } from '../apis/api/account';
+import { useQuery } from 'react-query';
+import Loading from '../components/Loading/Loading';
 
 function AuthRoute({ element }) {
+    const navigate = useNavigate();
     const location = useLocation();
     const pathname = location.pathname;
     const permitAllPath = ["/accounts"];
-    const [ authenticated, setAuthenticated ] = useState(false);
 
-    // accounts로 시작하는 경우 : Signup, Signin
+    const authenticateState = useQuery(["authenticate"], authenticate, {
+        retry: 0,
+        refetchOnWindowFocus: false     // 윈도우 포커스 됐을 때 refetch 안 되도록
+    });
+
+    if(authenticateState.isLoading) {
+        console.log("로딩중...")
+        return <Loading />
+    }
+
+    if(authenticateState.isError) {
+        for(let path of permitAllPath) {
+            if(pathname.startsWith(path)) {
+                return element;
+            }
+        }
+        return <Navigate to={"/accounts/login"}/>;
+    }
+
     for(let path of permitAllPath) {
         if(pathname.startsWith(path)) {
-            if(authenticated) { // 인증 됐을 경우 : 로그인 성공 -> 메인 화면
-                return <Navigate to={"/"}/>
-            }
-            return element;
+            return <Navigate to={"/"}/>
         }
     }
 
-    // accounts로 시작하지 않는 경우 : Home
-    if(!authenticated) { // 인증 되지 않은 경우 : 로그인 페이지
-        return <Navigate to={"/accounts/login"}/>
-    }
-    return element; // 인증 된 경우
+    return element;
 }
 
 export default AuthRoute;
