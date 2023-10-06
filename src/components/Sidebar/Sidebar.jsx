@@ -7,23 +7,27 @@ import { FiSearch } from 'react-icons/fi'
 import { AiFillPlusSquare, AiOutlinePlusSquare } from 'react-icons/ai'
 import NavItem from './NavItem/NavItem';
 import { useNavigate } from 'react-router-dom';
+import { useRecoilState } from 'recoil';
+import { showModalState } from '../../store/atoms/ModalState';
+import AddFeedModal from '../Modals/AddFeedModal/AddFeedModal';
 
 function Sidebar(props) {
-    
     const navigate = useNavigate();
     const[ isSelectedList, setIsSelectedList ] = useState([true, false, false, false]);
+    const [ showModal, setShowModal ] = useRecoilState(showModalState);
 
     const handleHomeClick = () => {
-        setIsSelectedList([true, false, false, false])
+        setIsSelectedList([true, false, false, false]);
     }
     const handleSearchClick = () => {
-        setIsSelectedList([false, true, false, false])
+        setIsSelectedList([false, true, false, false]);
     }
-    const handleAddContentClick = () => {
-        setIsSelectedList([false, false, true, false])
+    const handleAddFeedClick = () => {
+        setIsSelectedList([false, false, true, false]);
+        setShowModal(<AddFeedModal/>);
     }
     const handleProfileClick = () => {
-        setIsSelectedList([false, false, false, true])
+        setIsSelectedList([false, false, false, true]);
     }
 
     return (
@@ -35,7 +39,7 @@ function Sidebar(props) {
             <NavItem onclick={handleSearchClick}>
                 <FiSearch />
             </NavItem>
-            <NavItem onclick={handleAddContentClick}>
+            <NavItem onclick={handleAddFeedClick}>
                 {isSelectedList[2]? <AiFillPlusSquare /> : <AiOutlinePlusSquare />}
             </NavItem>
             <NavItem onclick={handleProfileClick}>
